@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import { steps, contacts } from '../../data/site';
+---
+
+<Layout title="Запись на пробную тренировку" description="Оставьте заявку на пробную тренировку по хоккею. Ответим в течение дня." hideStickyCta>
+  <section class="section">
+    <div class="container wrap">
+      <div>
+        <div class="eyebrow">Заявка</div>
+        <h1>Запишитесь на пробную тренировку</h1>
+        <p class="lead">Уровень не важен. Если группа набрана, добавим вас в лист ожидания и напишем, когда освободится место.</p>
+        <ol class="steps">
+          {steps.map((s) => <li><strong>{s.title}.</strong> {s.text}</li>)}
+        </ol>
+        <p class="muted">Не любите формы? <a href={contacts.telegram} target="_blank" rel="noopener">Напишите в Telegram</a>.</p>
+      </div>
+      <LeadForm id="form-main" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .wrap { display: grid; gap: 40px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+  .steps { padding-left: 1.2em; display: grid; gap: 8px; }
+</style>

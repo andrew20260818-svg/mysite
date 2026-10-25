@@ -1,0 +1,35 @@
+---
+import type { RequestType } from '../data/site';
+
+interface Props {
+  title?: string;
+  text?: string;
+  button?: string;
+  type?: RequestType;
+}
+
+const {
+  title = 'Приходите на пробную тренировку',
+  text = 'Уровень не важен: подберём группу и поможем с экипировкой.',
+  button = 'Записаться на пробную',
+  type,
+} = Astro.props;
+const href = type && type !== 'Пробная тренировка' ? `/zayavka/?type=${encodeURIComponent(type)}` : '/zayavka/';
+---
+
+<section class="cta-band">
+  <div class="container cta-band__inner">
+    <div>
+      <h2>{title}</h2>
+      <p>{text}</p>
+    </div>
+    <a class="btn btn--primary" href={href}>{button}</a>
+  </div>
+</section>
+
+<style>
+  .cta-band { background: linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 100%); color: #fff; padding: 48px 0; }
+  .cta-band__inner { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
+  .cta-band h2 { margin-bottom: .3em; }
+  .cta-band p { margin: 0; color: #c9d6e3; }
+</style>

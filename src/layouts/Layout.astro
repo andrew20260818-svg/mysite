@@ -1,0 +1,137 @@
+---
+import '../styles/global.css';
+import { team, contacts, nav, rinks } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  hideStickyCta?: boolean;
+}
+
+const { title, description = `${team.name}: ${team.tagline}. Тренировки пн и ср в 22:30, игры по выходным. Запишитесь на пробную тренировку.`, hideStickyCta = false } = Astro.props;
+const fullTitle = title === team.name ? title : `${title} | ${team.name}`;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header__inner">
+        <a href="/" class="logo" aria-label="На главную">
+          <img src="/favicon.svg" alt="" width="34" height="34" />
+          <span>{team.shortName}</span>
+        </a>
+        <nav class="nav" id="nav" aria-label="Главное меню">
+          {nav.map((item) => (
+            <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <div class="header__actions">
+          <a class="icon-link" href={contacts.telegram} target="_blank" rel="noopener" aria-label="Написать в Telegram">TG</a>
+          <a class="btn btn--primary header__cta" href="/zayavka/">Пробная тренировка</a>
+          <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Меню">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__grid">
+        <div>
+          <div class="logo logo--footer"><img src="/favicon.svg" alt="" width="30" height="30" /><span>{team.name}</span></div>
+          <p class="muted">{team.tagline}.</p>
+          <a class="btn btn--primary" href="/zayavka/">Записаться на пробную</a>
+        </div>
+        <div>
+          <h3>Тренировки</h3>
+          <p>{rinks.training.title}<br />{rinks.training.address}, {rinks.training.metro}<br /><a href={rinks.training.map} target="_blank" rel="noopener">На карте</a></p>
+          <h3>Игры</h3>
+          <p>{rinks.games.title}<br />{rinks.games.address}<br /><a href={rinks.games.map} target="_blank" rel="noopener">На карте</a></p>
+        </div>
+        <div>
+          <h3>Связаться</h3>
+          <p>
+            <a href={contacts.phoneHref}>{contacts.phone}</a><br />
+            <a href={contacts.telegram} target="_blank" rel="noopener">Telegram</a> ·
+            <a href={contacts.whatsapp} target="_blank" rel="noopener">WhatsApp</a><br />
+            <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
+          </p>
+          <p><a href="/politika/">Политика обработки персональных данных</a></p>
+        </div>
+      </div>
+      <div class="container footer__bottom">© {new Date().getFullYear()} {team.name}</div>
+    </footer>
+
+    {!hideStickyCta && (
+      <div class="sticky-cta">
+        <a class="btn btn--primary" href="/zayavka/">Записаться на пробную</a>
+        <a class="btn btn--ghost sticky-cta__tg" href={contacts.telegram} target="_blank" rel="noopener" aria-label="Telegram">TG</a>
+      </div>
+    )}
+
+    <script>
+      const burger = document.querySelector<HTMLButtonElement>('.burger');
+      const nav = document.getElementById('nav');
+      burger?.addEventListener('click', () => {
+        const open = nav?.classList.toggle('nav--open');
+        burger.setAttribute('aria-expanded', String(!!open));
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .header { position: sticky; top: 0; z-index: 50; background: rgba(11, 29, 51, .96); color: #fff; backdrop-filter: blur(6px); }
+  .header__inner { display: flex; align-items: center; gap: 20px; min-height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 800; font-size: 1.1rem; }
+  .logo--footer { color: var(--ink); margin-bottom: 10px; }
+  .nav { display: flex; gap: 18px; margin-left: auto; }
+  .nav a { color: #d6e2ee; text-decoration: none; font-weight: 600; font-size: .95rem; white-space: nowrap; }
+  .nav a:hover, .nav a[aria-current='page'] { color: #fff; }
+  .header__actions { display: flex; align-items: center; gap: 10px; }
+  .header__cta { padding: 10px 18px; font-size: .92rem; }
+  .icon-link { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #229ed9; color: #fff; text-decoration: none; font-weight: 800; font-size: .8rem; }
+  .burger { display: none; background: none; border: 0; padding: 8px; cursor: pointer; }
+  .burger span { display: block; width: 24px; height: 2px; background: #fff; margin: 5px 0; }
+
+  .footer { background: #fff; border-top: 1px solid var(--line); padding: 48px 0 24px; margin-bottom: 0; }
+  .footer__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; }
+  .footer h3 { font-size: 1rem; margin-top: 4px; }
+  .footer__bottom { margin-top: 32px; color: var(--ink-2); font-size: .9rem; }
+
+  .sticky-cta { display: none; }
+
+  @media (max-width: 1080px) {
+    .nav { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; gap: 0; background: var(--navy); padding: 8px 16px 16px; }
+    .nav a { padding: 12px 0; border-bottom: 1px solid #1e3a5c; }
+    .nav.nav--open { display: flex; }
+    .burger { display: block; }
+    .header__actions { margin-left: auto; }
+  }
+  @media (max-width: 640px) {
+    .header__cta, .icon-link { display: none; }
+    .sticky-cta { display: flex; gap: 8px; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 60; }
+    .sticky-cta .btn--primary { flex: 1; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+    .sticky-cta__tg { background: #229ed9; color: #fff; border-color: #229ed9; padding: 14px 18px; }
+    .footer { padding-bottom: 96px; }
+  }
+</style>

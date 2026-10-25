@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import { contacts, rinks } from '../../data/site';
+
+const places = [
+  { label: 'Тренировки', rink: rinks.training },
+  { label: 'Игры', rink: rinks.games },
+];
+---
+
+<Layout title="Контакты" description="Как связаться с командой и как добраться до катков: «Чемпион» на Южнопортовой и каток на Мосфильмовской.">
+  <PageHero eyebrow="Контакты" title="Связаться с нами" lead="Быстрее всего ответим в Telegram.">
+    <div class="btn-row">
+      <a class="btn btn--primary" href={contacts.telegram} target="_blank" rel="noopener">Написать в Telegram</a>
+      <a class="btn btn--ghost" href={contacts.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn--ghost" href={contacts.phoneHref}>{contacts.phone}</a>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="container grid grid--2">
+      {places.map(({ label, rink }) => (
+        <div class="card">
+          <span class="badge">{label}</span>
+          <h3>{rink.title}</h3>
+          <p class="muted">{rink.address}, {rink.metro}</p>
+          <div class="btn-row">
+            <a class="btn btn--ghost" href={rink.map} target="_blank" rel="noopener">На карте</a>
+            {rink.site && <a href={rink.site} target="_blank" rel="noopener">Сайт катка</a>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container">
+      <LeadForm id="form-contacts" />
+    </div>
+  </section>
+</Layout>

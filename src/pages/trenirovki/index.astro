@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { coaches, individualFormats, rinks } from '../../data/site';
+
+const forWho = [
+  'Догнать группу после перерыва',
+  'Поставить катание: торможение, кроссовер, ход назад',
+  'Улучшить бросок и обводку',
+  'Подготовиться к первому матчу',
+];
+const typeHref = `/zayavka/?type=${encodeURIComponent('Индивидуальная тренировка')}`;
+---
+
+<Layout title="Индивидуальные тренировки" description="Индивидуальные тренировки по хоккею для взрослых с двумя тренерами: катание, бросок, игровая подготовка. 1 на 1 или мини-группа.">
+  <PageHero eyebrow="С тренером" title="Индивидуальные тренировки" lead="Быстрый способ подтянуть технику: тренер работает только с вами или с мини-группой из 2–3 человек.">
+    <a class="btn btn--primary" href={typeHref}>Записаться</a>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <h2>Для кого</h2>
+      <div class="grid grid--4">
+        {forWho.map((f) => <div class="card"><p>{f}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container">
+      <h2>Тренеры</h2>
+      <div class="grid grid--2">
+        {coaches.map((c) => (
+          <article class="card coach">
+            {c.photo ? <img class="coach__photo" src={c.photo} alt={c.name} /> : <div class="placeholder-photo coach__photo">🏒</div>}
+            <div class="coach__body">
+              <h3>{c.name}</h3>
+              <p class="muted">{c.role}</p>
+              <p>{c.experience}</p>
+              <div class="tags">{c.specialty.map((s) => <span class="badge">{s}</span>)}</div>
+              <a class="btn btn--primary" href={`${typeHref}&coach=${encodeURIComponent(c.name)}`}>Записаться к тренеру</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Форматы и цены</h2>
+      <div class="grid grid--3">
+        {individualFormats.map((f) => (
+          <div class="card"><h3>{f.title}</h3><p class="muted">{f.text}</p><div class="big-number">{f.price}</div></div>
+        ))}
+      </div>
+      <p class="muted note">Занятия проходят: {rinks.training.title}, {rinks.training.metro}. Время согласуем с тренером. Цена указана с учётом льда.</p>
+    </div>
+  </section>
+
+  <CtaBand title="Запишитесь на первое занятие" button="Записаться" type="Индивидуальная тренировка" />
+</Layout>
+
+<style>
+  .coach { flex-direction: row; gap: 20px; align-items: flex-start; }
+  .coach__photo { width: 140px; flex-shrink: 0; aspect-ratio: 4/5; object-fit: cover; border-radius: 10px; font-size: 2.4rem; }
+  .coach__body { display: grid; gap: 8px; }
+  .coach__body p { margin: 0; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .note { margin-top: 20px; }
+  @media (max-width: 520px) { .coach { flex-direction: column; } .coach__photo { width: 100%; max-width: 220px; } }
+</style>

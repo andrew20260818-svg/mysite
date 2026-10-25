@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Faq from '../../components/Faq.astro';
+import { firstTraining, equipment, steps, levels, players } from '../../data/site';
+
+const beginners = players.filter((p) => p.cameAsBeginner);
+---
+
+<Layout title="Начать играть с нуля" description="Хоккей для взрослых новичков: как проходит первая тренировка, что нужно из экипировки, путь от нуля до первой игры.">
+  <PageHero eyebrow="Новичкам" title="Хоккей с нуля для взрослых" lead="Не обязательно уметь кататься. Начнёте в группе новичков, а через несколько месяцев выйдете на свой первый матч.">
+    <a class="btn btn--primary" href="/zayavka/">Записаться на пробную</a>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <h2>Как проходит первая тренировка</h2>
+      <ol class="timeline">
+        {firstTraining.map((t) => (
+          <li><strong>{t.time}</strong><span>{t.text}</span></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container">
+      <h2>Путь от нуля до матча</h2>
+      <div class="grid grid--3">
+        {steps.map((s, i) => (
+          <div class="card"><span class="big-number">{i + 1}</span><h3>{s.title}</h3><p class="muted">{s.text}</p></div>
+        ))}
+      </div>
+      <h3 class="mt">Уровни</h3>
+      <ul class="plain">
+        {levels.map((l) => <li><strong>{l.name}.</strong> {l.signs}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two">
+      <div>
+        <h2>Что нужно из экипировки</h2>
+        <p class="muted">На пробную можно прийти без своей формы: поможем с прокатом. Потом подскажем, что купить и где, чтобы не переплатить.</p>
+      </div>
+      <ul class="checklist">
+        {equipment.map((e) => <li>{e}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  {beginners.length > 0 && (
+    <section class="section section--white">
+      <div class="container">
+        <h2>Они тоже начинали с нуля</h2>
+        <div class="grid grid--3">
+          {beginners.map((p) => (
+            <div class="card"><h3>{p.name}</h3><span class="badge">в команде с {p.since}</span><p class="muted">«{p.quote}»</p></div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="container">
+      <h2>Вопросы новичков</h2>
+      <Faq />
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>
+
+<style>
+  .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .timeline li { display: grid; grid-template-columns: 80px 1fr; gap: 16px; padding: 16px 20px; background: #fff; border-radius: 12px; border: 1px solid var(--line); }
+  .timeline strong { color: var(--accent); }
+  .mt { margin-top: 36px; }
+  .plain { padding-left: 1.2em; }
+  .two { display: grid; gap: 32px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .checklist { list-style: none; padding: 0; margin: 0; columns: 2; gap: 24px; }
+  .checklist li { padding: 8px 0 8px 28px; position: relative; break-inside: avoid; }
+  .checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+</style>

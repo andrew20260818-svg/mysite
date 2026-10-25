@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { contacts, equipment, priceBonus } from '../../data/site';
+---
+
+<Layout title="Заявка принята" description="Спасибо за заявку на пробную тренировку." hideStickyCta>
+  <section class="section">
+    <div class="container narrow">
+      <div class="eyebrow">Готово</div>
+      <h1>Спасибо, заявка принята!</h1>
+      <p class="lead">Мы свяжемся с вами в течение дня, подберём группу и подскажем с прокатом формы.</p>
+
+      <h2>Что дальше</h2>
+      <ol>
+        <li>Администратор напишет или позвонит, чтобы выбрать день.</li>
+        <li>Приходите на пробную тренировку за 30 минут до начала.</li>
+        <li>После тренировки тренер подскажет ваш уровень и группу.</li>
+      </ol>
+      <p><strong>{priceBonus}.</strong></p>
+
+      <h2>Что взять с собой</h2>
+      <p class="muted">Если своей формы нет, ничего страшного: поможем с прокатом. Полный комплект выглядит так:</p>
+      <p>{equipment.join(', ')}.</p>
+
+      <div class="btn-row">
+        <a class="btn btn--primary" href={contacts.telegramChannel} target="_blank" rel="noopener">Подписаться на Telegram команды</a>
+        <a class="btn btn--ghost" href="/">На главную</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .narrow { max-width: 760px; }
+  h2 { margin-top: 32px; font-size: 1.5rem; }
+</style>
