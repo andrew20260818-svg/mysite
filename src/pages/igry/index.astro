@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { team, rinks, upcomingGames } from '../../data/site';
+
+const ways = [
+  { title: 'Через тренировки', text: 'Тренируетесь с командой, и тренер зовёт в состав, когда вы готовы. Обычно через несколько месяцев.' },
+  { title: 'Сразу в состав', text: 'Если уже играли: приходите на просмотровую тренировку, после неё обсудим участие в сезоне.' },
+  { title: 'Разовая игра', text: 'Опытным игрокам можно сыграть один матч без обязательств на весь сезон.' },
+];
+const prepare = ['Позиция и хват клюшки', 'Где и сколько лет играли', 'Полная экипировка', 'Готовность играть по выходным'];
+---
+
+<Layout title="Игры и команда" description={`Игры по выходным на Мосфильмовской, ${team.league}. Как попасть в состав, разовая игра для опытных, запасные вратари.`}>
+  <PageHero eyebrow="Для играющих" title="Играем матчи каждые выходные" lead={`${rinks.games.title}, ${rinks.games.address}. Команда выступает: ${team.league}.`}>
+    <div class="btn-row">
+      <a class="btn btn--primary" href={`/zayavka/?type=${encodeURIComponent('Хочу играть в команде')}`}>Хочу играть</a>
+      <a class="btn btn--ghost" href={`/zayavka/?type=${encodeURIComponent('Запасной вратарь')}`}>Я вратарь</a>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <h2>Как попасть в игру</h2>
+      <div class="grid grid--3">
+        {ways.map((w) => <div class="card"><h3>{w.title}</h3><p class="muted">{w.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container">
+      <h2>Ближайшие матчи</h2>
+      <table class="table">
+        <thead><tr><th>Дата</th><th>Соперник</th><th>Время</th></tr></thead>
+        <tbody>
+          {upcomingGames.map((g) => <tr><td>{g.date}</td><td>{g.opponent}</td><td>{g.time}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two">
+      <div>
+        <h2>Что подготовить перед заявкой</h2>
+        <ul>{prepare.map((p) => <li>{p}</li>)}</ul>
+      </div>
+      <div class="card">
+        <span class="badge badge--accent">Вратарям</span>
+        <h3>Ищем запасных вратарей</h3>
+        <p class="muted">Оставьте контакт, и мы позовём вас, когда понадобится вратарь на игру или тренировку.</p>
+        <a class="btn btn--primary" href={`/zayavka/?type=${encodeURIComponent('Запасной вратарь')}`}>В список вратарей</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Хотите играть с нами?" text="Расскажите о себе, и мы пригласим на просмотровую тренировку." button="Хочу играть" type="Хочу играть в команде" />
+</Layout>
+
+<style>
+  .two { display: grid; gap: 32px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; }
+</style>

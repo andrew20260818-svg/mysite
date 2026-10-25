@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { prices, priceBonus } from '../../data/site';
+
+const included = ['Лёд', 'Два тренера', 'Вратарь на тренировке', 'Раздевалка и сауна'];
+const rules = [
+  'Оплата переводом или картой. УТОЧНИТЬ',
+  'За спорт можно получить налоговый вычет 13%. УТОЧНИТЬ, выдаёте ли документы',
+  'Пропущенную тренировку абонемента можно перенести, если предупредить за сутки. УТОЧНИТЬ',
+  'Возврат за неиспользованные тренировки по заявлению. УТОЧНИТЬ',
+];
+---
+
+<Layout title="Цены" description="Цены на пробную тренировку, абонементы, участие в играх и индивидуальные тренировки по хоккею.">
+  <PageHero eyebrow="Цены" title="Сколько стоит играть" lead={priceBonus} />
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--3">
+        {prices.map((p) => (
+          <div class={`card ${p.highlight ? 'card--hl' : ''}`}>
+            {p.highlight && <span class="badge badge--accent">Начните с этого</span>}
+            <h3>{p.title}</h3>
+            <div class="big-number">{p.price}</div>
+            <p class="muted">{p.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container two">
+      <div>
+        <h2>Что входит в цену</h2>
+        <ul>{included.map((i) => <li>{i}</li>)}</ul>
+      </div>
+      <div>
+        <h2>Оплата, перенос и возврат</h2>
+        <ul>{rules.map((r) => <li>{r}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>
+
+<style>
+  .card--hl { border: 2px solid var(--accent); }
+  .two { display: grid; gap: 32px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+</style>

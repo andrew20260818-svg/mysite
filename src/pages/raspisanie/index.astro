@@ -1,0 +1,62 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { schedule, rinks, contacts } from '../../data/site';
+
+const r = rinks.training;
+---
+
+<Layout title="Расписание тренировок" description="Тренировки по понедельникам и средам в 22:30 на катке «Чемпион», м. Кожуховская. Игры по выходным на Мосфильмовской.">
+  <PageHero eyebrow="Расписание" title="Понедельник и среда, 22:30" lead={`${r.title}, ${r.address}, ${r.metro}.`} />
+
+  <section class="section">
+    <div class="container">
+      <h2>Тренировки</h2>
+      <table class="table">
+        <thead><tr><th>День</th><th>Время</th><th>Длительность</th><th></th></tr></thead>
+        <tbody>
+          {schedule.training.map((s) => (
+            <tr>
+              <td><strong>{s.day}</strong></td>
+              <td>{s.time}</td>
+              <td>{s.duration}</td>
+              <td><a class="btn btn--primary btn--sm" href={`/zayavka/?day=${encodeURIComponent(s.day)}`}>Записаться</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2 class="mt">Игры</h2>
+      <p>По выходным, {rinks.games.title.toLowerCase()}, {rinks.games.address}. Даты матчей на странице <a href="/igry/">«Игры и команда»</a>.</p>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container two">
+      <div>
+        <h2>Как добраться</h2>
+        <p><strong>{r.title}</strong><br />{r.address}, {r.metro}</p>
+        <p class="muted">На комплексе своя парковка. Маршрут от метро удобнее всего построить в картах.</p>
+        <div class="btn-row">
+          <a class="btn btn--ghost" href={r.map} target="_blank" rel="noopener">Открыть в Яндекс Картах</a>
+          <a href={r.site} target="_blank" rel="noopener">Сайт катка</a>
+        </div>
+      </div>
+      <div>
+        <h3>На катке</h3>
+        <ul>{r.features.map((f) => <li>{f}</li>)}</ul>
+        <p class="muted">Изменения в расписании публикуем в <a href={contacts.telegramChannel} target="_blank" rel="noopener">Telegram-канале</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Выберите день и приходите" />
+</Layout>
+
+<style>
+  .mt { margin-top: 40px; }
+  .btn--sm { padding: 8px 16px; font-size: .9rem; }
+  .two { display: grid; gap: 32px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  @media (max-width: 640px) { .table th:nth-child(3), .table td:nth-child(3) { display: none; } }
+</style>

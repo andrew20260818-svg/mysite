@@ -1,0 +1,68 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { team, players } from '../../data/site';
+
+const positions = ['Все', 'Нападающий', 'Защитник', 'Вратарь'];
+const sorted = [...players].sort((a, b) => a.number - b.number);
+---
+
+<Layout title="Состав команды" description={`Игроки команды «${team.name}»: нападающие, защитники, вратари. Многие пришли новичками.`}>
+  <PageHero eyebrow="Состав" title="Наша команда" lead="Предприниматели, айтишники, врачи и инженеры. Многие встали на коньки уже взрослыми." />
+
+  <section class="section">
+    <div class="container">
+      <div class="filters" role="group" aria-label="Фильтр по амплуа">
+        {positions.map((p, i) => <button type="button" class={i === 0 ? 'active' : ''} data-filter={p}>{p}</button>)}
+      </div>
+      <div class="players">
+        {sorted.map((p) => (
+          <article class="player" data-position={p.position}>
+            {p.photo ? <img class="placeholder-photo" src={p.photo} alt={p.name} loading="lazy" /> : <div class="placeholder-photo">{p.number}</div>}
+            <div class="player__meta">
+              <span class="player__num">#{p.number}</span>
+              {p.captain && <span class="badge badge--accent">Капитан</span>}
+              {p.cameAsBeginner && <span class="badge">Пришёл новичком</span>}
+            </div>
+            <h3>{p.name}</h3>
+            <p class="muted">{p.position} · в команде с {p.since}</p>
+            <p class="player__quote">«{p.quote}»</p>
+          </article>
+        ))}
+        <a class="player player--you" href={`/zayavka/?type=${encodeURIComponent('Хочу играть в команде')}`}>
+          <div class="placeholder-photo">?</div>
+          <h3>Здесь можешь быть ты</h3>
+          <p class="muted">Оставь заявку →</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Хотите в команду?" button="Хочу в команду" type="Хочу играть в команде" />
+</Layout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('.player[data-position]');
+  buttons.forEach((btn) => btn.addEventListener('click', () => {
+    buttons.forEach((b) => b.classList.toggle('active', b === btn));
+    const f = btn.dataset.filter;
+    cards.forEach((c) => { c.hidden = f !== 'Все' && c.dataset.position !== f; });
+  }));
+</script>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .filters button { font: inherit; font-weight: 700; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+  .filters button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .players { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .player { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 6px; align-content: start; }
+  .player h3 { margin: 0; }
+  .player p { margin: 0; }
+  .player__meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+  .player__num { font-weight: 800; color: var(--accent); }
+  .player__quote { font-style: italic; color: var(--ink-2); }
+  .player--you { text-decoration: none; color: inherit; border-style: dashed; border-width: 2px; }
+  .player--you:hover { border-color: var(--accent); }
+</style>

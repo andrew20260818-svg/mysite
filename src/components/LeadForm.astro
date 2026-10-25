@@ -1,0 +1,127 @@
+---
+// Одна форма на весь сайт. Заявки принимает Netlify Forms, а функция
+// netlify/functions/submission-created.mjs пересылает их в Telegram.
+// Поля у всех копий формы одинаковые: Netlify сверяет их по имени формы.
+import { levels, requestTypes, type RequestType } from '../data/site';
+
+interface Props {
+  type?: RequestType;
+  title?: string;
+  id?: string;
+}
+
+const { type = 'Пробная тренировка', title = 'Записаться на пробную тренировку', id = 'form' } = Astro.props;
+---
+
+<form
+  class="lead-form"
+  id={id}
+  name="zayavka"
+  method="POST"
+  action="/spasibo/"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+>
+  <input type="hidden" name="form-name" value="zayavka" />
+  <input type="hidden" name="page" value={Astro.url.pathname} />
+  <p hidden><label>Не заполняйте: <input name="bot-field" /></label></p>
+
+  <h3>{title}</h3>
+  <p class="muted lead-form__note">Ответим в течение дня и подскажем с экипировкой.</p>
+
+  <label>
+    <span>Что вас интересует</span>
+    <select name="type" data-type-select>
+      {requestTypes.map((t) => <option value={t} selected={t === type}>{t}</option>)}
+    </select>
+  </label>
+
+  <label>
+    <span>Имя</span>
+    <input name="name" required autocomplete="given-name" placeholder="Как к вам обращаться" />
+  </label>
+
+  <label>
+    <span>Телефон или Telegram</span>
+    <input name="contact" required autocomplete="tel" placeholder="+7 … или @username" />
+  </label>
+
+  <label>
+    <span>Уровень катания</span>
+    <select name="level" required>
+      <option value="" disabled selected>Выберите</option>
+      {levels.map((l) => <option value={l.name}>{l.name}: {l.signs.toLowerCase()}</option>)}
+    </select>
+  </label>
+
+  <label>
+    <span>Своя экипировка</span>
+    <select name="equipment">
+      <option>Есть полностью</option>
+      <option>Есть частично</option>
+      <option>Нет, нужна помощь</option>
+    </select>
+  </label>
+
+  <details class="lead-form__more" data-more>
+    <summary>Для опытных игроков: позиция и опыт</summary>
+    <label>
+      <span>Позиция и хват</span>
+      <input name="position" placeholder="Например: защитник, левый хват" />
+    </label>
+    <label>
+      <span>Где и сколько играли</span>
+      <input name="experience" placeholder="Лига, команда, годы" />
+    </label>
+  </details>
+
+  <label>
+    <span>Комментарий</span>
+    <textarea name="comment" rows="2" placeholder="Удобный день, вопросы"></textarea>
+  </label>
+
+  <label class="lead-form__consent">
+    <input type="checkbox" name="consent" value="да" required />
+    <span>Согласен на обработку персональных данных по <a href="/politika/" target="_blank">политике</a></span>
+  </label>
+
+  <button class="btn btn--primary" type="submit">Отправить заявку</button>
+</form>
+
+<script>
+  // Подставляем тип заявки из ссылки вида /zayavka/?type=...
+  const params = new URLSearchParams(location.search);
+  const wanted = params.get('type');
+  document.querySelectorAll<HTMLFormElement>('form.lead-form').forEach((form) => {
+    const select = form.querySelector<HTMLSelectElement>('[data-type-select]');
+    if (select && wanted && [...select.options].some((o) => o.value === wanted)) select.value = wanted;
+    // День тренировки или тренер из ссылки попадают в комментарий
+    const comment = form.querySelector<HTMLTextAreaElement>('textarea[name="comment"]');
+    const day = params.get('day');
+    const coach = params.get('coach');
+    if (comment && !comment.value) {
+      if (day) comment.value = `Хочу прийти: ${day}`;
+      else if (coach) comment.value = `Хочу заниматься с тренером: ${coach}`;
+    }
+    const more = form.querySelector<HTMLDetailsElement>('[data-more]');
+    const sync = () => {
+      if (more && select && ['Хочу играть в команде', 'Запасной вратарь'].includes(select.value)) more.open = true;
+    };
+    select?.addEventListener('change', sync);
+    sync();
+  });
+</script>
+
+<style>
+  .lead-form { background: #fff; color: var(--ink); border-radius: var(--radius); padding: 28px; display: grid; gap: 14px; border: 1px solid var(--line); max-width: 560px; }
+  .lead-form h3 { font-size: 1.4rem; margin: 0; }
+  .lead-form__note { margin: -6px 0 4px; }
+  label { display: grid; gap: 6px; font-weight: 600; font-size: .95rem; }
+  input, select, textarea { font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--ice); color: var(--ink); width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+  .lead-form__more { padding: 12px 16px; display: grid; gap: 12px; }
+  .lead-form__more[open] label { margin-top: 12px; }
+  .lead-form__consent { grid-template-columns: auto 1fr; align-items: start; font-weight: 400; font-size: .9rem; }
+  .lead-form__consent input { width: 18px; height: 18px; margin-top: 3px; }
+  .lead-form button { justify-self: start; }
+</style>
